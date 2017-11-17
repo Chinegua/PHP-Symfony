@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="results")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ResultsRepository")
  */
-class Results
+class Results implements \JsonSerializable
 {
     /**
      * @var int
@@ -44,6 +44,19 @@ class Results
      * @ORM\Column(name="last_score", type="integer")
      */
     private $lastScore;
+
+    /**
+     * Results constructor.
+     * @param int $userId
+     * @param int $bestScore
+     * @param int $lastScore
+     */
+    public function __construct($userId, $bestScore, $lastScore)
+    {
+        $this->userId = $userId;
+        $this->bestScore = $bestScore;
+        $this->lastScore = $lastScore;
+    }
 
 
     /**
@@ -126,6 +139,24 @@ class Results
     public function getLastScore()
     {
         return $this->lastScore;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return ['results' => [
+            'id'            => $this->id,
+            'user'          => $this->userId,
+            'best_score'    => $this->bestScore,
+            'last_score'    => $this->lastScore
+        ]
+        ];
     }
 }
 
